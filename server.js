@@ -24,11 +24,20 @@ mongoose
 
 
 
+const User = require("./schema/userschema");
 
-const User = require("./userschema");
+
 app.post("/usersdata", async (req, res) => {
   try {
-    const { username, email,phonenumber , password,confirmpassword} = req.body;
+    const { username, email,phonenumber , password, confirmpassword} = req.body;
+
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: "User with this email already exists." });
+    }
+
+
 
     const newUser = new User({ username, email,phonenumber , password,confirmpassword, account_balance: 0, });
 
@@ -69,6 +78,7 @@ app.post("/login", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
+  console.log('login successfully')
 });
 
 
